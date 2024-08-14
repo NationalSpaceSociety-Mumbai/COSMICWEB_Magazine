@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COSMICWEB Magazine Flipbook</title>
+</head>
+<body>
+    <h1>Welcome to COSMICWEB Magazine</h1>
+    <form id="accessForm">
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <button type="submit">Submit</button>
+    </form>
+    
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('accessForm').onsubmit = function(e) {
+            e.preventDefault();
+            var email = document.getElementById('email').value;
+            var scriptURL = 'https://script.google.com/macros/s/AKfycbw8Z7AB8aipPpinLS8xx63H6PT6ZNqcb4OellaAnjvGoSMRbQHgUMTzPx-4lAkxg9o/exec';
+            fetch(`${scriptURL}?email=${email}`)
+                .then(response => response.text())
+                .then(text => {
+                    if (text === "Access Granted") {
+                        document.getElementById('response').innerHTML = '<iframe src="https://pubhtml5.com/ajfv/ikqe/" width="640" height="480" seamless="seamless" scrolling="no" frameborder="0" allowfullscreen></iframe>';
+                    } else {
+                        document.getElementById('response').innerHTML = '<p>Access Denied. You do not have permission to view this magazine.</p>';
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
