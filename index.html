@@ -21,7 +21,16 @@
             height: 600px;
             border: none;
         }
+        #epubContainer {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            overflow: auto;
+            display: none;
+        }
     </style>
+    <!-- Include the epub.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/epub.js/0.3.88/epub.min.js"></script>
 </head>
 <body>
     <h1>Welcome to COSMICWEB Magazine</h1>
@@ -44,6 +53,14 @@
         <div id="flipbookContainer"></div>
     </div>
 
+    <!-- New section for EPUB upload -->
+    <div id="epubUpload" style="display: none;">
+        <h2>Upload EPUB File</h2>
+        <input type="file" id="epubFile" accept=".epub">
+        <button id="loadEpub">Load EPUB</button>
+        <div id="epubContainer"></div>
+    </div>
+
     <script>
         document.getElementById('accessForm').onsubmit = function(e) {
             e.preventDefault();
@@ -55,6 +72,7 @@
                     if (text === "Access Granted") {
                         document.getElementById('response').innerHTML = '<p>Access Granted. Please select a volume below:</p>';
                         document.getElementById('volumeSelection').style.display = 'block';
+                        document.getElementById('epubUpload').style.display = 'block'; // Show EPUB upload
                     } else {
                         document.getElementById('response').innerHTML = '<p>Access Denied. You do not have permission to view this magazine.</p>';
                     }
@@ -78,28 +96,32 @@
                 case 'volume3':
                     flipbookURL = 'https://www.flipsnack.com/embed/YOUR_VOLUME3_ID';
                     break;
-                case 'volume4':
-                    flipbookURL = 'https://www.flipsnack.com/embed/YOUR_VOLUME1_ID';
-                    break;
-                case 'volume5':
-                    flipbookURL = 'https://www.flipsnack.com/embed/YOUR_VOLUME2_ID';
-                    break;
-                case 'volume6':
-                    flipbookURL = 'https://www.flipsnack.com/embed/YOUR_VOLUME3_ID';
-                    break;
-                case 'volume7':
-                    flipbookURL = 'https://www.flipsnack.com/embed/YOUR_VOLUME1_ID';
-                    break;
-                case 'volume8':
-                    flipbookURL = 'https://www.flipsnack.com/embed/YOUR_VOLUME2_ID';
-                    break;
-                case 'volume9':
-                    flipbookURL = 'https://www.flipsnack.com/embed/YOUR_VOLUME3_ID';
-                    break;
                 // Add more cases for additional volumes
             }
 
             document.getElementById('flipbookContainer').innerHTML = '<iframe src="' + flipbookURL + '" width="640" height="480" seamless="seamless" scrolling="no" frameborder="0" allowfullscreen></iframe>';
+        }
+
+        // Load EPUB file
+        document.getElementById('loadEpub').onclick = function() {
+            var fileInput = document.getElementById('epubFile');
+            var file = fileInput.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var epub = e.target.result;
+                    var book = ePub(epub);
+                    var rendition = book.renderTo("epubContainer", {
+                        width: "100%",
+                        height: "100%"
+                    });
+                    rendition.display();
+                    document.getElementById('epubContainer').style.display = 'block'; // Show EPUB reader
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                alert('Please select an EPUB file to upload.');
+            }
         }
     </script>
 </body>
